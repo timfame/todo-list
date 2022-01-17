@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TODO-List</title>
+</head>
+<body>
+    {{range $listIndex, $list := .}}
+        <div style="margin-top: 40px"> Список #{{$list.ID}}: {{$list.Title}}</div>
+        {{range $taskIndex, $task := $list.Tasks}}
+            <div class="outer" style="overflow: hidden; margin-left: 40px">
+                <div class="left" style="float: left; width: auto; margin-right: 20px">
+                    {{if $task.IsDone}}
+                        <s>{{$task.Content}}</s>
+                    {{else}}
+                        {{$task.Content}}
+                    {{end}}
+                </div>
+                <div class="right" style="margin-left: 20px; width: auto">
+                    <form action="/api/mark-task-done" method="post" id="markForm">
+                        <input type="hidden" name="listIndex" value="{{$listIndex}}" id="listIndex">
+                        <input type="hidden" name="taskIndex" value="{{$taskIndex}}" id="taskIndex">
+                        {{if $task.IsDone}}
+                            <input type="submit" value="Undo">
+                        {{else}}
+                            <input type="submit" value="Done">
+                        {{end}}
+                    </form>
+                </div>
+            </div>
+        {{end}}
+        <form action="/api/add-task" method="post" id="addTask">
+            <input type="hidden" name="listIndex" value="{{$listIndex}}">
+            <input type="textarea" name="content">
+            <input type="submit" value="Add task">
+        </form>
+        <form action="/api/remove-list" method="post" id="removeList">
+            <input type="hidden" name="listIndex" value="{{$listIndex}}">
+            <input type="submit" value="Remove list">
+        </form>
+    {{end}}
+    <br>
+    <form action="/api/add-list" method="post" id="addList">
+        Title: <input type="text" name="title">
+        <input type="submit" value="Add list">
+    </form>
+</body>
+</html>
